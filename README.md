@@ -1,6 +1,7 @@
 ## 🔐 Password Generation Logic
 
-        Our Password Manager generates strong, secure passwords using a mix of the following character sets: 
+        Our Password Manager generates strong, secure passwords using a 
+        mix of the following character sets: 
 
 **Alphabets:**
 
@@ -13,7 +14,8 @@
 
 **Special Characters:**
 
-         1. Common symbols like: ! @ # $ % ^ & * ( ) _ + - = { } [ ] : ; < > , . ? / | \ 
+        Common symbols like: ! @ # $ % ^ & * ( ) _ + - = { } [ ] : ;
+                             < > , . ? / | \ 
 
 
 ### 🔐 Password Length Constraints 
@@ -26,10 +28,12 @@ To ensure strong and secure passwords, the Password Manager allows the user to c
 
      Maximum Length (Constraint): 32 characters
 
-     User must choose a length within this range for the password to be generated.
+     User must choose a length within this range for the password
+     to be generated.
 
 **If a user enters a length below 8 or above 32, the system will:**
 
-     Prompt the user to enter a valid length again or automatically generate a password using the default length (e.g., 12 characters)
+     Prompt the user to enter a valid length again or automatically 
+     generate a password using the default length (e.g., 12 characters)
 
 
