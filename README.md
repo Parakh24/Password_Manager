@@ -1,6 +1,7 @@
 # 🔐Password Generation Logic
 
-    Our Password Manager generates strong, secure passwords using a mix of the following character sets: 
+    Our Password Manager generates strong, secure passwords using a mix of the following character 
+    sets: 
 
 **Alphabets:**
 
