@@ -28,3 +28,11 @@ The valid length is evenly divided into four sections:**
 4. **Lowercase Letters:** (a-z)
 
     The final quarter includes lowercase alphabets.
+
+**Password Shuffling:**
+
+1. After constructing the password from all four segments,   the characters are shuffled to ensure randomness and avoid predictable patterns.
+
+**Output:**
+
+1. The final password is displayed or stored securely for the user.
