@@ -35,4 +35,4 @@ The valid length is evenly divided into four sections:**
 
 **Output:**
 
-1. The final password is displayed or stored securely for the user.
+1. The final password is displayed or stored securely for the user.  
