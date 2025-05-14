@@ -1,0 +1,33 @@
+Password Manager - Examples
+
+1. Generate a Password of Specific Length:
+
+   Input:
+     generate_password(16)
+
+   Output:
+     Generated Password = A#9bG!3dK8$eLp@w 
+
+2. Handle Invalid Length: (too short or too long)
+
+   Input:
+     generae_password(4)
+    
+   Output:
+     Error: Password length must be between 8 and 32 characters.
+
+3. Composition of Password: 
+    
+    Password Length is divided into four segments:
+    - 25% Upper case letters (A-Z)
+    - 25% Special Characters (@#$%^etc...)
+    - 25% Digits (0-9)
+    - 25% Lower case Letters (a-z)  
+
+4. Example CLI Usage (if applicable)
+
+ Command:
+       python Password_Manager.py --length 20
+
+ Output:
+       Generated_Password: G@4rLp8#zXq!N2yEt$9w 
