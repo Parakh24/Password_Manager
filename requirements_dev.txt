@@ -3,3 +3,6 @@ isort
 flake8
 autopep8
 pylint
+argparse
+hashlib
+            
