@@ -1,12 +1,19 @@
+"""
+This module demonstrates how to generate secure passwords using 
+the  `string` , `Fernet` , `os` , `bcrypt` , `secrets`
 
-                                                                                                                                                                        
-from cryptography.fernet import fernet
-import os                                
-import string                            
+
+
+"""
+
+
+from cryptography.fernet import Fernet 
+import os
+import string 
 import bcrypt                                                
 import secrets 
 
-                                                                    
+                                                                                                              
 
 Password_length = int(input("Enter the length of the password: "))  
 
@@ -14,7 +21,6 @@ if Password_length < 8 or Password_length > 32:
     print("Error: Password length must be between 8 and 32 characters.")
     exit()
 
-# Divide the password length into 4 parts 
 
 upper = Password_length // 4
 digits = Password_length // 4 
@@ -43,7 +49,7 @@ Generated_password = secrets.choice(password_chars)
 
 
 #in order to encrypt a password
-Encrypted_password = fernet.encrypt(Generated_password.encode()) 
+Encrypted_password = Fernet.encrypt(Generated_password.encode()) 
 
 
 #Hashing
