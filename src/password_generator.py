@@ -12,11 +12,10 @@ Author: Parakh Virnawe
 """                    
                                       
 from cryptography.fernet import Fernet
-import os
 import string
 import bcrypt
-import secrets
-                              
+import secrets                        
+                                          
 def generate_password(length):
     """
     Generates a strong password with uppercase, lowercase, digits, and punctuation.
@@ -27,7 +26,7 @@ def generate_password(length):
     Returns:
         str: A securely shuffled password string.
     """
-
+                                                     
     # Password length Constraints 
     if length < 8 or length > 32:                                           
         raise ValueError("Password length must be between 8 and 32.")         
@@ -43,7 +42,7 @@ def generate_password(length):
         upper += 1 
         digits += 1
         punc += 1
-        
+         
 
 
 
@@ -155,39 +154,29 @@ def hash_password(encrypted_password):
     return bcrypt.hashpw(encrypted_password, bcrypt.gensalt())
 
 
-def save_to_file(data, path="secure_data/Hashed.txt"):
-    """
-    Saves binary data to a file at the given path.
-    
-    Args:
-        data (bytes): Data to be written.
-        path (str): File path to save to.
-    """
-    os.makedirs(os.path.dirname(path), exist_ok=True)
-    with open(path, "wb") as f:
-        f.write(data)
-
 
 def main():
     """
     Main function to run password generation, encryption, and hashing.
 
     """
-    try:
-        length = int(input("Enter the length of the password (8-32): "))  
-        password = generate_password(length) 
-        print(f"Generated password: {password}")      
-
-        key = Fernet.generate_key()
-        encrypted_password = encrypt_password(password, key)
+    try: 
+    
+        
+        length = int(input("Enter the length of the password (8-32): "))    
+        password = generate_password(length)                              #Calling the Function
+        print(f"Generated password: {password}")                          
+        
+        key = Fernet.generate_key()                                       #Encrypting the Password 
+        encrypted_password = encrypt_password(password, key)              
         hashed = hash_password(encrypted_password)
                                                    
-        save_to_file(hashed)
-        print("✅ Encrypted and hashed password saved to 'secure_data/Hashed.txt'")
 
+    
     except ValueError as e:
-        print("Error:", e)
+        print("Error:", e) 
     
 
 if __name__ == "__main__":
-    main()
+    main() 
+
