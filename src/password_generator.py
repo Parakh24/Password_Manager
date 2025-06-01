@@ -90,7 +90,7 @@ def generate_digits_part(digits):
     
     """
 
-    return''.join(secrets.choice(string.ascii_digits) for _ in range(digits))
+    return''.join(secrets.choice(string.digits) for _ in range(digits))
 
 
 def generate_punc_part(punc):
@@ -106,7 +106,7 @@ def generate_punc_part(punc):
     
     """
 
-    return''.join(secrets.choice(string.ascii_punc) for _ in range(punc))
+    return''.join(secrets.choice(string.punctuation) for _ in range(punc))
 
 
 def generate_lowercase_part(lower):
@@ -169,14 +169,14 @@ def main():
         
         key = Fernet.generate_key()                                       #Encrypting the Password 
         encrypted_password = encrypt_password(password, key)              
-        hashed = hash_password(encrypted_password)
-                                                   
-
+        e = hash_password(encrypted_password)                             #bcrypt used for hashing the password
+                                                    
+        
     
     except ValueError as e:
         print("Error:", e) 
     
 
 if __name__ == "__main__":
-    main() 
-
+    main()                                 
+     
