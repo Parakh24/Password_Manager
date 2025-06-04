@@ -1,3 +1,7 @@
 pytest
 pytest-cov
 coverage
+bcrypt
+argparse
+passlib 
+cryptography
