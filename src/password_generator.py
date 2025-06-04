@@ -8,13 +8,14 @@ Description:
     version in a file using the `os` module.
 
     
-Author: Parakh Virnawe
+Author: Parakh Virnawe 
+
 """                    
-                                      
-from cryptography.fernet import Fernet
-import string
-import bcrypt
-import secrets                        
+                                                                                         
+from cryptography.fernet import Fernet    
+import string    
+import bcrypt     
+import secrets                                                   
                                           
 def generate_password(length):
     """
@@ -44,7 +45,7 @@ def generate_password(length):
         punc += 1
          
 
-
+    
 
     # ''.join -> joins the randomly selected characters into strings
     #  string.ascii_uppercase -> it selects the uppercase letters
@@ -52,7 +53,7 @@ def generate_password(length):
     part_1 = generate_uppercase_part(upper)
     part_2 = generate_digits_part(digits) 
     part_3 = generate_punc_part(punc)
-    part_4 = generate_punc_part(lower)
+    part_4 = generate_lowercase_part(lower)
 
 
     password_chars = list(part_1 + part_2 + part_3 + part_4)
@@ -109,6 +110,7 @@ def generate_punc_part(punc):
     return''.join(secrets.choice(string.punctuation) for _ in range(punc))
 
 
+
 def generate_lowercase_part(lower):
     """
     Generates a string of random lowercase letters
@@ -125,23 +127,7 @@ def generate_lowercase_part(lower):
 
 
 
-def encrypt_password(password, key):
-
-    """
-    Encrypts the password using Fernet.
-    
-    Args:
-        password (str): The plain password to encrypt.
-        key (bytes): The Fernet key.
-    
-    Returns:
-        bytes: Encrypted password.
-    """
-    fernet = Fernet(key)
-    return fernet.encrypt(password.encode())
-
-
-def hash_password(encrypted_password):
+def hash_password(generated_password):
     """
     Hashes the encrypted password using bcrypt.
     
@@ -151,7 +137,23 @@ def hash_password(encrypted_password):
     Returns:
         bytes: Hashed password.
     """
-    return bcrypt.hashpw(encrypted_password, bcrypt.gensalt())
+    return bcrypt.hashpw(generated_password, bcrypt.gensalt())                           
+                                                                       
+    
+def encrypted_password(password, key):
+    
+
+    key = Fernet.generate_key() 
+    with open("key.key", "wb") as key_file:
+        key_file.write(key)         
+
+    # Load the key
+    with open("key.key" , "rb") as key_file:
+        key = key_file.read() 
+    fernet = Fernet(key)    
+
+    
+    
 
 
 
@@ -167,11 +169,14 @@ def main():
         password = generate_password(length)                              #Calling the Function
         print(f"Generated password: {password}")                          
         
-        key = Fernet.generate_key()                                       #Encrypting the Password 
-        encrypted_password = encrypt_password(password, key)              
-        e = hash_password(encrypted_password)                             #bcrypt used for hashing the password
-                                                    
+
         
+
+
+        e = hash_password(password)                                       #bcrypt used for hashing the password
+        print(f"Hashed Password: {e}")                                            
+        
+
     
     except ValueError as e:
         print("Error:", e) 
@@ -179,4 +184,5 @@ def main():
 
 if __name__ == "__main__":
     main()                                 
-     
+              
+    
