@@ -17,14 +17,14 @@ import string
 import bcrypt     
 import secrets 
 import os                                                  
-                                          
+                                              
 def generate_password(length , difficulty):
     """
     Generates a strong password with uppercase, lowercase, digits, and punctuation.
-    
+         
     Args:
        length (int): The Length of the desired password (between 8 and 32).
-    
+         
     Returns:
         str: A securely shuffled password string.
     """
@@ -206,7 +206,7 @@ def decrypted_password(encrypted_password):
     
 
 
-def save_password_to_file(password , hashed , encrypted):
+def save_password_to_file(service,password , hashed , encrypted):
 
     """
     Saves the generated, encrypted, and hashed password to a file in binary mode.
@@ -218,15 +218,16 @@ def save_password_to_file(password , hashed , encrypted):
     """
     try:
         with open("password.secure", "ab") as file:
+         file.write(b"Service: " + service.encode() + b"\n")
          #file.write(f"Generated Password: {password}\n".encode())
          #file.write(b"Hashed Password: " + hashed + b"\n")
          file.write(b"Encrypted Password: " + encrypted + b"\n")
          file.write(b"-" * 40 + b"\n")
-
+        
     except Exception as e:
-        print("Error:", e) 
-
-
+        print("Error:", e)  
+    
+    
 def main():
     """
     Main function to run password generation, encryption, and hashing.
@@ -234,22 +235,22 @@ def main():
     """
     try: 
     
-        
+        service = str(input("Enter the service name: ")).strip()
         length = int(input("Enter the length of the password (8-32): ")) 
         difficulty = input("Enter the difficulty level (easy , medium , hard): ")   
         password = generate_password(length , difficulty)                              #Calling the Function
         print(f"Generated password: {password}")                         
         
         encrypted = encrypted_password(password)                                       #for encryption
-        print(f"Encrypted Password: {encrypted}")
+        #print(f"Encrypted Password: {encrypted}")
         
         decrypted = decrypted_password(encrypted)                                      #for decryption
-        print(f"Decrypted Password: {decrypted}")
+        #print(f"Decrypted Password: {decrypted}")
 
         hashed = hash_password(password)                                               #bcrypt used for hashing the password
         #print(f"Hashed Password: {hashed}")                                            
         
-        save_password_to_file(password,hashed,encrypted)
+        save_password_to_file(service,password,hashed,encrypted)
     
     except ValueError as e:
         print("Error:", e) 
