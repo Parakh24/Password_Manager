@@ -148,7 +148,8 @@ def hash_password(generated_password):
         bytes: Hashed password.
     """
     return bcrypt.hashpw(generated_password.encode(), bcrypt.gensalt())                           
-                                                                       
+
+
     
 def encrypted_password(password):
     """
@@ -176,18 +177,33 @@ def encrypted_password(password):
        encrypted = fernet.encrypt(password.encode())
        return encrypted
 
-
     
 
+def decrypted_password(encrypted_password):
+    """
+    Decrypts the encrypted password using Fernet.
+    
+    Args:
+        encrypted_password (bytes): The encrypted password.
+        key (bytes): The encryption key.
 
+    Returns:
+        str: Decrypted password.
+    """
+    if not os.path.exists("key.key"):
+     key = Fernet.generate_key() 
+     with open("key.key", "wb") as key_file:
+        key_file.write(key)
 
+    else:  
+       with open("key.key", "rb") as key_file:
+        key = key_file.read()
 
+        fernet = Fernet(key)
 
-
-
-
-
-
+       decrypted = fernet.decrypt(encrypted_password).decode()
+       return decrypted
+    
 
 
 def save_password_to_file(password , hashed , encrypted):
@@ -226,7 +242,9 @@ def main():
         
         encrypted = encrypted_password(password)                                       #for encryption
         print(f"Encrypted Password: {encrypted}")
-    
+        
+        decrypted = decrypted_password(encrypted)                                      #for decryption
+        print(f"Decrypted Password: {decrypted}")
 
         hashed = hash_password(password)                                               #bcrypt used for hashing the password
         #print(f"Hashed Password: {hashed}")                                            
