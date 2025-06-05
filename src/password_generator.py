@@ -17,7 +17,7 @@ import string
 import bcrypt     
 import secrets                                                   
                                           
-def generate_password(length):
+def generate_password(length , difficulty):
     """
     Generates a strong password with uppercase, lowercase, digits, and punctuation.
     
@@ -32,34 +32,43 @@ def generate_password(length):
     if length < 8 or length > 32:                                           
         raise ValueError("Password length must be between 8 and 32.")         
     
+    if difficulty == "easy":
+        password_chars = string.ascii_letters + string.digits
+        return ''.join(secrets.choice(password_chars) for _ in range(length))
+
+    elif difficulty == "medium":
+        password_chars = string.ascii_letters + string.digits + string.punctuation
+        return ''.join(secrets.choice(password_chars) for _ in range(length))
+
+    elif difficulty == "Hard": 
+
     # length divided into four parts stored in four different variables
-    upper = length // 4
-    digits = length // 4
-    punc = length // 4
-    lower = length // 4
+     upper = length // 4
+     digits = length // 4
+     punc = length // 4
+     lower = length // 4
         
     # Distribute remaining characters (if not divisible by 4)
-    for _ in range(length - (upper + digits + punc + lower)):
+     for _ in range(length - (upper + digits + punc + lower)):
         upper += 1 
         digits += 1
         punc += 1
          
-
-    
-
     # ''.join -> joins the randomly selected characters into strings
     #  string.ascii_uppercase -> it selects the uppercase letters
     # for _ in range(upper) -> runs the loop the number of times variable stores the uppercase letters
-    part_1 = generate_uppercase_part(upper)
-    part_2 = generate_digits_part(digits) 
-    part_3 = generate_punc_part(punc)
-    part_4 = generate_lowercase_part(lower)
+     part_1 = generate_uppercase_part(upper)
+     part_2 = generate_digits_part(digits) 
+     part_3 = generate_punc_part(punc)
+     part_4 = generate_lowercase_part(lower)
 
 
-    password_chars = list(part_1 + part_2 + part_3 + part_4)
-    secrets.SystemRandom().shuffle(password_chars)  # Cryptographically secure shuffle
-    return ''.join(password_chars)
-
+     password_chars = list(part_1 + part_2 + part_3 + part_4)
+     secrets.SystemRandom().shuffle(password_chars)  # Cryptographically secure shuffle
+     return ''.join(password_chars)
+    
+    else:
+        raise ValueError("Invalid difficulty level. Please choose 'easy', 'medium' or 'hard' .") 
 
 def generate_uppercase_part(upper):
     """
@@ -141,20 +150,37 @@ def hash_password(generated_password):
                                                                        
     
 def encrypted_password(password, key):
+    """
+    Encrypts the password using Fernet.
     
+    Args:
+        password (str): The password to be encrypted.
+        key (bytes): The encryption key.
+
+    Returns:
+        bytes: Encrypted password. 
+
+    """
 
     key = Fernet.generate_key() 
-    with open("key.key", "wb") as key_file:
-        key_file.write(key)         
+    fernet = Fernet(key)
+    return fernet.encrypt(password.encode())
+                     
+def save_password_to_file(password , hashed , encrypted):
 
-    # Load the key
-    with open("key.key" , "rb") as key_file:
-        key = key_file.read() 
-    fernet = Fernet(key)    
-
+    """
+    Saves the generated, encrypted, and hashed password to a file in binary mode.
     
-    
-
+    Args:
+        password (str): The original generated password.
+        hashed (bytes): The hashed password (bcrypt).
+        encrypted (bytes): The encrypted password (Fernet).
+    """
+    with open("password.txt", "ab") as file:
+        file.write(f"Generated Password: {password}\n".encode())
+        file.write(b"Encrypted Password: " + encrypted + b"\n")
+        file.write(b"Hashed Password: " + hashed + b"\n")
+        file.write(b"-" * 40 + b"\n")
 
 
 def main():
@@ -165,18 +191,19 @@ def main():
     try: 
     
         
-        length = int(input("Enter the length of the password (8-32): "))    
-        password = generate_password(length)                              #Calling the Function
-        print(f"Generated password: {password}")                          
+        length = int(input("Enter the length of the password (8-32): ")) 
+        difficulty = input("Enter the difficulty level (easy , medium , hard): ")   
+        password = generate_password(length , difficulty)                              #Calling the Function
+        print(f"Generated password: {password}")                         
+        
+        encrypted = encrypted_password(password)                                       #for encryption
+        print(f"Encrypted Password: {encrypted}")
         
 
+        hashed = hash_password(password)                                               #bcrypt used for hashing the password
+        print(f"Hashed Password: {hashed}")                                            
         
-
-
-        e = hash_password(password)                                       #bcrypt used for hashing the password
-        print(f"Hashed Password: {e}")                                            
-        
-
+        save_password_to_file(password,hashed,encrypted)
     
     except ValueError as e:
         print("Error:", e) 
