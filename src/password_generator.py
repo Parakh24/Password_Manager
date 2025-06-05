@@ -11,11 +11,12 @@ Description:
 Author: Parakh Virnawe 
 
 """                    
-                                                                                         
+                                                                                          
 from cryptography.fernet import Fernet    
 import string    
 import bcrypt     
-import secrets                                                   
+import secrets 
+import os                                                  
                                           
 def generate_password(length , difficulty):
     """
@@ -141,15 +142,15 @@ def hash_password(generated_password):
     Hashes the encrypted password using bcrypt.
     
     Args:
-        encrypted_password (bytes): The encrypted password.
+        generated_password (bytes): The encrypted password.
     
     Returns:
         bytes: Hashed password.
     """
-    return bcrypt.hashpw(generated_password, bcrypt.gensalt())                           
+    return bcrypt.hashpw(generated_password.encode(), bcrypt.gensalt())                           
                                                                        
     
-def encrypted_password(password, key):
+def encrypted_password(password):
     """
     Encrypts the password using Fernet.
     
@@ -161,11 +162,34 @@ def encrypted_password(password, key):
         bytes: Encrypted password. 
 
     """
+    if not os.path.exists("key.key"):
+     key = Fernet.generate_key() 
+     with open("key.key", "wb") as key_file:
+        key_file.write(key)
 
-    key = Fernet.generate_key() 
-    fernet = Fernet(key)
-    return fernet.encrypt(password.encode())
-                     
+    else:  
+       with open("key.key", "rb") as key_file:
+        key = key_file.read()
+
+        fernet = Fernet(key)
+
+       encrypted = fernet.encrypt(password.encode())
+       return encrypted
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
 def save_password_to_file(password , hashed , encrypted):
 
     """
@@ -176,11 +200,15 @@ def save_password_to_file(password , hashed , encrypted):
         hashed (bytes): The hashed password (bcrypt).
         encrypted (bytes): The encrypted password (Fernet).
     """
-    with open("password.txt", "ab") as file:
-        file.write(f"Generated Password: {password}\n".encode())
-        file.write(b"Encrypted Password: " + encrypted + b"\n")
-        file.write(b"Hashed Password: " + hashed + b"\n")
-        file.write(b"-" * 40 + b"\n")
+    try:
+        with open("password.secure", "ab") as file:
+         #file.write(f"Generated Password: {password}\n".encode())
+         #file.write(b"Hashed Password: " + hashed + b"\n")
+         file.write(b"Encrypted Password: " + encrypted + b"\n")
+         file.write(b"-" * 40 + b"\n")
+
+    except Exception as e:
+        print("Error:", e) 
 
 
 def main():
@@ -198,10 +226,10 @@ def main():
         
         encrypted = encrypted_password(password)                                       #for encryption
         print(f"Encrypted Password: {encrypted}")
-        
+    
 
         hashed = hash_password(password)                                               #bcrypt used for hashing the password
-        print(f"Hashed Password: {hashed}")                                            
+        #print(f"Hashed Password: {hashed}")                                            
         
         save_password_to_file(password,hashed,encrypted)
     
