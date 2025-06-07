@@ -11,7 +11,7 @@ Description:
 Author: Parakh Virnawe 
 
 """                    
-                                                                                          
+                                                                                         
 from cryptography.fernet import Fernet    
 import string    
 import bcrypt     
@@ -48,7 +48,7 @@ def generate_password(length , difficulty):
      digits = length // 4
      punc = length // 4
      lower = length // 4
-        
+                                                                                              
     # Distribute remaining characters (if not divisible by 4)
      for _ in range(length - (upper + digits + punc + lower)):
         upper += 1 
@@ -176,37 +176,9 @@ def encrypted_password(password):
 
        encrypted = fernet.encrypt(password.encode())
        return encrypted
-
     
 
-def decrypted_password(encrypted_password):
-    """
-    Decrypts the encrypted password using Fernet.
-    
-    Args:
-        encrypted_password (bytes): The encrypted password.
-        key (bytes): The encryption key.
-
-    Returns:
-        str: Decrypted password.
-    """
-    if not os.path.exists("key.key"):
-     key = Fernet.generate_key() 
-     with open("key.key", "wb") as key_file:
-        key_file.write(key)
-
-    else:  
-       with open("key.key", "rb") as key_file:
-        key = key_file.read()
-
-        fernet = Fernet(key)
-
-       decrypted = fernet.decrypt(encrypted_password).decode()
-       return decrypted
-    
-
-
-def save_password_to_file(service,password , hashed , encrypted):
+def save_password_to_file(service , password , hashed , encrypted):
 
     """
     Saves the generated, encrypted, and hashed password to a file in binary mode.
@@ -223,11 +195,12 @@ def save_password_to_file(service,password , hashed , encrypted):
          #file.write(b"Hashed Password: " + hashed + b"\n")
          file.write(b"Encrypted Password: " + encrypted + b"\n")
          file.write(b"-" * 40 + b"\n")
-        
+                                                                    
     except Exception as e:
-        print("Error:", e)  
+        print("Error:", e)                                            
     
-    
+
+
 def main():
     """
     Main function to run password generation, encryption, and hashing.
@@ -244,11 +217,9 @@ def main():
         encrypted = encrypted_password(password)                                       #for encryption
         #print(f"Encrypted Password: {encrypted}")
         
-        decrypted = decrypted_password(encrypted)                                      #for decryption
-        #print(f"Decrypted Password: {decrypted}")
 
         hashed = hash_password(password)                                               #bcrypt used for hashing the password
-        #print(f"Hashed Password: {hashed}")                                            
+        #print(f"Hashed Password: {hashed}")                                                                                     
         
         save_password_to_file(service,password,hashed,encrypted)
     
@@ -257,6 +228,6 @@ def main():
     
 
 if __name__ == "__main__":
-    main()                                 
+    main()                                   
               
     
