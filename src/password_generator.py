@@ -13,11 +13,10 @@ Author: Parakh Virnawe
 """                    
                                                                                          
 from cryptography.fernet import Fernet    
-import string    
-import bcrypt     
+import string         
 import secrets 
 import os                                                  
-                                              
+                                           
 def generate_password(length , difficulty):
     """
     Generates a strong password with uppercase, lowercase, digits, and punctuation.
@@ -42,7 +41,7 @@ def generate_password(length , difficulty):
         return ''.join(secrets.choice(password_chars) for _ in range(length))
 
     elif difficulty == "Hard": 
-
+    
     # length divided into four parts stored in four different variables
      upper = length // 4
      digits = length // 4
@@ -135,21 +134,6 @@ def generate_lowercase_part(lower):
 
     return ''.join(secrets.choice(string.ascii_lowercase) for _ in range(lower)) 
 
-
-
-def hash_password(generated_password):
-    """
-    Hashes the encrypted password using bcrypt.
-    
-    Args:
-        generated_password (bytes): The encrypted password.
-    
-    Returns:
-        bytes: Hashed password.
-    """
-    return bcrypt.hashpw(generated_password.encode(), bcrypt.gensalt())                           
-
-
     
 def encrypted_password(password):
     """
@@ -178,7 +162,7 @@ def encrypted_password(password):
        return encrypted
     
 
-def save_password_to_file(service , password , hashed , encrypted):
+def save_password_to_file(service , password  , encrypted):
 
     """
     Saves the generated, encrypted, and hashed password to a file in binary mode.
@@ -191,8 +175,6 @@ def save_password_to_file(service , password , hashed , encrypted):
     try:
         with open("password.secure", "ab") as file:
          file.write(b"Service: " + service.encode() + b"\n")
-         #file.write(f"Generated Password: {password}\n".encode())
-         #file.write(b"Hashed Password: " + hashed + b"\n")
          file.write(b"Encrypted Password: " + encrypted + b"\n")
          file.write(b"-" * 40 + b"\n")
                                                                     
@@ -216,12 +198,9 @@ def main():
         
         encrypted = encrypted_password(password)                                       #for encryption
         #print(f"Encrypted Password: {encrypted}")
+                                                                                             
         
-
-        hashed = hash_password(password)                                               #bcrypt used for hashing the password
-        #print(f"Hashed Password: {hashed}")                                                                                     
-        
-        save_password_to_file(service,password,hashed,encrypted)
+        save_password_to_file(service,password,encrypted)
     
     except ValueError as e:
         print("Error:", e) 
