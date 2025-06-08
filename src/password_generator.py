@@ -4,7 +4,7 @@ Script: password_generator.py
 
 Description:
     This script securely generates a password using `secrets` and `string`,
-    encrypts it with `Fernet`, hashes it with `bcrypt`, and stores the hashed
+    encrypts it with `Fernet`, and stores the encrypted password along with the
     version in a file using the `os` module.
 
     
@@ -13,17 +13,20 @@ Author: Parakh Virnawe
 """                    
                                                                                          
 from cryptography.fernet import Fernet    
-import string    
-import bcrypt     
-import secrets                                                   
-                                          
-def generate_password(length):
+import string         
+import secrets 
+import os                                                                                                            
+                                           
+def generate_password(length , difficulty):
     """
-    Generates a strong password with uppercase, lowercase, digits, and punctuation.
-    
+    Generates a strong password with uppercase, lowercase, digits, and punctuation. 
+    Creates  on the basis of the difficulty level i.e. easy , medium and hard. 
+
+
     Args:
-       length (int): The Length of the desired password (between 8 and 32).
-    
+       length (int): The Length of the desired password (between 8 and 32). 
+       difficulty (str): The difficulty level of the password (easy, medium , hard).
+
     Returns:
         str: A securely shuffled password string.
     """
@@ -32,35 +35,51 @@ def generate_password(length):
     if length < 8 or length > 32:                                           
         raise ValueError("Password length must be between 8 and 32.")         
     
-    # length divided into four parts stored in four different variables
-    upper = length // 4
-    digits = length // 4
-    punc = length // 4
-    lower = length // 4
-        
-    # Distribute remaining characters (if not divisible by 4)
-    for _ in range(length - (upper + digits + punc + lower)):
-        upper += 1 
-        digits += 1
-        punc += 1
-         
 
-    
 
     # ''.join -> joins the randomly selected characters into strings
-    #  string.ascii_uppercase -> it selects the uppercase letters
-    # for _ in range(upper) -> runs the loop the number of times variable stores the uppercase letters
-    part_1 = generate_uppercase_part(upper)
-    part_2 = generate_digits_part(digits) 
-    part_3 = generate_punc_part(punc)
-    part_4 = generate_lowercase_part(lower)
+    # string.ascii_letters + string.digits -> it selects the letters(uppercase and lowercase)+ digits
+    # for _ in range(upper) -> runs the loop the number of times variable stores the letters and digits
+    if difficulty == "easy":
+        password_chars = string.ascii_letters + string.digits                      
+        return ''.join(secrets.choice(password_chars) for _ in range(length))      
 
+    elif difficulty == "medium":
+        password_chars = string.ascii_letters + string.digits + string.punctuation
+        return ''.join(secrets.choice(password_chars) for _ in range(length))
 
-    password_chars = list(part_1 + part_2 + part_3 + part_4)
-    secrets.SystemRandom().shuffle(password_chars)  # Cryptographically secure shuffle
-    return ''.join(password_chars)
-
-
+    elif difficulty == "hard":  
+    
+    # length divided into four parts stored in four different variables
+     upper = length // 4
+     digits = length // 4
+     punc = length // 4
+     lower = length // 4                    
+                                                                                              
+    # Distribute remaining characters (if not divisible by 4)
+     leftovers = length - (upper + digits + punc + lower)
+     for i in range(leftovers):
+        if i == 0:
+            upper += 1
+        elif i == 1:
+            digits += 1
+        elif i == 2:
+            punc += 1            
+         
+                         
+     part_1 = generate_uppercase_part(upper)
+     part_2 = generate_digits_part(digits) 
+     part_3 = generate_punc_part(punc)
+     part_4 = generate_lowercase_part(lower)
+    
+    
+     password_chars = list(part_1 + part_2 + part_3 + part_4)
+     secrets.SystemRandom().shuffle(password_chars)  # Cryptographically secure shuffle
+     return ''.join(password_chars)
+    
+    else:
+        raise ValueError("Invalid difficulty level. Please choose 'easy', 'medium' or 'hard' .") 
+        
 def generate_uppercase_part(upper):
     """
     Generates a string of random uppercase letters.
@@ -125,64 +144,79 @@ def generate_lowercase_part(lower):
 
     return ''.join(secrets.choice(string.ascii_lowercase) for _ in range(lower)) 
 
-
-
-def hash_password(generated_password):
+    
+def encrypted_password(password):
     """
-    Hashes the encrypted password using bcrypt.
+    Encrypts the password using Fernet.
     
     Args:
-        encrypted_password (bytes): The encrypted password.
-    
+        password (str): The password to be encrypted.
+        key (bytes): The encryption key.
+
     Returns:
-        bytes: Hashed password.
+        bytes: Encrypted password. 
+
     """
-    return bcrypt.hashpw(generated_password, bcrypt.gensalt())                           
-                                                                       
+    if not os.path.exists("key.key"):
+     key = Fernet.generate_key() 
+     with open("key.key", "wb") as key_file:
+        key_file.write(key)
     
-def encrypted_password(password, key):
-    
+    else:  
+       with open("key.key", "rb") as key_file:
+        key = key_file.read()
 
-    key = Fernet.generate_key() 
-    with open("key.key", "wb") as key_file:
-        key_file.write(key)         
+        fernet = Fernet(key)
 
-    # Load the key
-    with open("key.key" , "rb") as key_file:
-        key = key_file.read() 
-    fernet = Fernet(key)    
-
-    
+       encrypted = fernet.encrypt(password.encode())
+       return encrypted
     
 
+def save_password_to_file(service , encrypted): 
+                                                                                                                           
+    """                                                                                                   
+    Saves the generated, encrypted, and hashed password to a file in binary mode.
+    
+    Args:
+        hashed (bytes): The hashed password (bcrypt).
+        encrypted (bytes): The encrypted password (Fernet).
+
+    """
+    try:
+        with open("password.secure", "ab") as file:
+         file.write(b"Service: " + service.encode() + b"\n")
+         file.write(b"Encrypted Password: " + encrypted + b"\n")
+         file.write(b"-" * 40 + b"\n")
+                                                                    
+    except Exception as e:
+        print("Error:", e)                                            
 
 
 def main():
     """
-    Main function to run password generation, encryption, and hashing.
+    Main function to run password generation and encryption. 
 
     """
     try: 
-    
-        
-        length = int(input("Enter the length of the password (8-32): "))    
-        password = generate_password(length)                              #Calling the Function
-        print(f"Generated password: {password}")                          
         
 
+        service = str(input("Enter the service name: ")).strip()
+        length = int(input("Enter the length of the password (8-32): ")) 
+        difficulty = input("Enter the difficulty level (easy , medium , hard): ")   
+        password = generate_password(length , difficulty)                              #Calling the Function
+        print(f"Generated password: {password}")                         
         
-
-
-        e = hash_password(password)                                       #bcrypt used for hashing the password
-        print(f"Hashed Password: {e}")                                            
+        encrypted = encrypted_password(password)                                       #for encryption
+        #print(f"Encrypted Password: {encrypted}")
+                                                                                             
         
-
+        save_password_to_file(service,password,encrypted)
     
     except ValueError as e:
         print("Error:", e) 
     
 
 if __name__ == "__main__":
-    main()                                 
+    main()                                   
               
     
