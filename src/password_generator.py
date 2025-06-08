@@ -15,7 +15,7 @@ Author: Parakh Virnawe
 from cryptography.fernet import Fernet    
 import string         
 import secrets 
-import os                                                  
+import os                                                                                                            
                                            
 def generate_password(length , difficulty):
     """
@@ -40,19 +40,23 @@ def generate_password(length , difficulty):
         password_chars = string.ascii_letters + string.digits + string.punctuation
         return ''.join(secrets.choice(password_chars) for _ in range(length))
 
-    elif difficulty == "Hard": 
+    elif difficulty == "hard":  
     
     # length divided into four parts stored in four different variables
      upper = length // 4
      digits = length // 4
      punc = length // 4
-     lower = length // 4
+     lower = length // 4                    
                                                                                               
     # Distribute remaining characters (if not divisible by 4)
-     for _ in range(length - (upper + digits + punc + lower)):
-        upper += 1 
-        digits += 1
-        punc += 1
+     leftovers = length - (upper + digits + punc + lower)
+     for i in range(leftovers):
+        if i == 0:
+            upper += 1
+        elif i == 1:
+            digits += 1
+        elif i == 2:
+            punc += 1
          
     # ''.join -> joins the randomly selected characters into strings
     #  string.ascii_uppercase -> it selects the uppercase letters
@@ -163,8 +167,8 @@ def encrypted_password(password):
     
 
 def save_password_to_file(service , password  , encrypted):
-
-    """
+                                                                                                        
+    """                                                                                                   
     Saves the generated, encrypted, and hashed password to a file in binary mode.
     
     Args:
@@ -180,7 +184,6 @@ def save_password_to_file(service , password  , encrypted):
                                                                     
     except Exception as e:
         print("Error:", e)                                            
-    
 
 
 def main():
