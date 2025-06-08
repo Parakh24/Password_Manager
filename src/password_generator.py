@@ -4,7 +4,7 @@ Script: password_generator.py
 
 Description:
     This script securely generates a password using `secrets` and `string`,
-    encrypts it with `Fernet`, hashes it with `bcrypt`, and stores the hashed
+    encrypts it with `Fernet`, and stores the encrypted password along with the
     version in a file using the `os` module.
 
     
@@ -19,11 +19,14 @@ import os
                                            
 def generate_password(length , difficulty):
     """
-    Generates a strong password with uppercase, lowercase, digits, and punctuation.
-         
+    Generates a strong password with uppercase, lowercase, digits, and punctuation. 
+    Creates  on the basis of the difficulty level i.e. easy , medium and hard. 
+
+
     Args:
-       length (int): The Length of the desired password (between 8 and 32).
-         
+       length (int): The Length of the desired password (between 8 and 32). 
+       difficulty (str): The difficulty level of the password (easy, medium , hard).
+
     Returns:
         str: A securely shuffled password string.
     """
@@ -32,9 +35,14 @@ def generate_password(length , difficulty):
     if length < 8 or length > 32:                                           
         raise ValueError("Password length must be between 8 and 32.")         
     
+
+
+    # ''.join -> joins the randomly selected characters into strings
+    # string.ascii_letters + string.digits -> it selects the letters(uppercase and lowercase)+ digits
+    # for _ in range(upper) -> runs the loop the number of times variable stores the letters and digits
     if difficulty == "easy":
-        password_chars = string.ascii_letters + string.digits
-        return ''.join(secrets.choice(password_chars) for _ in range(length))
+        password_chars = string.ascii_letters + string.digits                      
+        return ''.join(secrets.choice(password_chars) for _ in range(length))      
 
     elif difficulty == "medium":
         password_chars = string.ascii_letters + string.digits + string.punctuation
@@ -56,24 +64,22 @@ def generate_password(length , difficulty):
         elif i == 1:
             digits += 1
         elif i == 2:
-            punc += 1
+            punc += 1            
          
-    # ''.join -> joins the randomly selected characters into strings
-    #  string.ascii_uppercase -> it selects the uppercase letters
-    # for _ in range(upper) -> runs the loop the number of times variable stores the uppercase letters
+                         
      part_1 = generate_uppercase_part(upper)
      part_2 = generate_digits_part(digits) 
      part_3 = generate_punc_part(punc)
      part_4 = generate_lowercase_part(lower)
-
-
+    
+    
      password_chars = list(part_1 + part_2 + part_3 + part_4)
      secrets.SystemRandom().shuffle(password_chars)  # Cryptographically secure shuffle
      return ''.join(password_chars)
     
     else:
         raise ValueError("Invalid difficulty level. Please choose 'easy', 'medium' or 'hard' .") 
-
+        
 def generate_uppercase_part(upper):
     """
     Generates a string of random uppercase letters.
@@ -155,7 +161,7 @@ def encrypted_password(password):
      key = Fernet.generate_key() 
      with open("key.key", "wb") as key_file:
         key_file.write(key)
-
+    
     else:  
        with open("key.key", "rb") as key_file:
         key = key_file.read()
@@ -166,15 +172,15 @@ def encrypted_password(password):
        return encrypted
     
 
-def save_password_to_file(service , password  , encrypted):
-                                                                                                        
+def save_password_to_file(service , encrypted): 
+                                                                                                                           
     """                                                                                                   
     Saves the generated, encrypted, and hashed password to a file in binary mode.
     
     Args:
-        password (str): The original generated password.
         hashed (bytes): The hashed password (bcrypt).
         encrypted (bytes): The encrypted password (Fernet).
+
     """
     try:
         with open("password.secure", "ab") as file:
@@ -188,11 +194,12 @@ def save_password_to_file(service , password  , encrypted):
 
 def main():
     """
-    Main function to run password generation, encryption, and hashing.
+    Main function to run password generation and encryption. 
 
     """
     try: 
-    
+        
+
         service = str(input("Enter the service name: ")).strip()
         length = int(input("Enter the length of the password (8-32): ")) 
         difficulty = input("Enter the difficulty level (easy , medium , hard): ")   
