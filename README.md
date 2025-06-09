@@ -20,7 +20,7 @@
 
 To ensure strong and secure passwords, the Password Manager allows the user to customize the password length, but within safe boundaries.
 
-✅ Rules for Password Length:
+✅ **Rules for Password Length:**
 
      Minimum Length (Threshold): 8 characters
 
@@ -32,4 +32,20 @@ To ensure strong and secure passwords, the Password Manager allows the user to c
 **If a user enters a length below 8 or above 32, the system will:**
 
      Prompt the user to enter a valid length again or automatically generate a password using the 
-     default length (e.g., 12 characters)
+     default length (e.g., 12 characters) 
+
+### Encrypting the Password
+
+     After the Password is generated, it is now encrypted to secure it from unauthorized access 
+
+ **Rules for Decrypting the Password:**
+      Create a file named key(for ease of understanding)
+
+      Generate a fixed key for encrypting the Passcode
+
+      Convert the encrypted passcode in bytes
+
+      Using the generated key, decrypt the passcode of any specific service
+
+      This helps the user to get the passcodes of specific services
+      
