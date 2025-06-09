@@ -28,7 +28,11 @@ def decrypted_password(enc_password):
        return decrypted 
     
 
-def decrypt_specific_service():
+def decrypt_specific_service(): 
+    """
+    This function decrypts the encrypted password of a specific service.
+        
+    """
     target_service = input("Enter the service name you want to decrypt the password for: ").strip().lower()
 
     with open("password.secure", "rb") as file:
@@ -36,7 +40,7 @@ def decrypt_specific_service():
 
     current_service = None
     found = False
-
+    
     for i in range(len(lines)):
         line = lines[i].strip()
 
@@ -45,7 +49,7 @@ def decrypt_specific_service():
 
         if current_service == target_service and line.startswith(b"Encrypted Password:"):
             encrypted = line.split(b"Encrypted Password:")[1].strip()
-            try:
+            try: 
                 decrypted = decrypted_password(encrypted)
                 print(f"\n Decrypted password for '{target_service}': {decrypted}")
                 found = True

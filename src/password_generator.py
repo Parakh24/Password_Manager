@@ -198,8 +198,6 @@ def main():
 
     """
     try: 
-        
-
         service = str(input("Enter the service name: ")).strip()
         length = int(input("Enter the length of the password (8-32): ")) 
         difficulty = input("Enter the difficulty level (easy , medium , hard): ")   
@@ -210,10 +208,10 @@ def main():
         #print(f"Encrypted Password: {encrypted}")
                                                                                              
         
-        save_password_to_file(service,password,encrypted)
+        save_password_to_file(service,encrypted)
     
     except ValueError as e:
-        print("Error:", e) 
+        print("Error:", e)                                   
     
 
 if __name__ == "__main__":
